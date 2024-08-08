@@ -15,16 +15,21 @@ function App() {
       console.log(`Server created room ${roomId} for client ${socket.id}`);
       setRoomId(roomId);
       setInGame(true);
-      //redirect to game page
+      //TODO redirect to game page
     });
 
     socket.on('start game', (game) => {
+      console.log("In Start Game In APP");
+      console.log(JSON.stringify(game, null, 4));
+      setRoomId(game.roomId);
+      setInGame(true);
       setGame(game);
-      //Render game
+      //TODO Render game
     });
 
     socket.on('update', (game) => {
       setBoard(game.board);
+      //TODO show players who's turn it is
     });
 
     socket.on('error', (error) => {
@@ -33,6 +38,7 @@ function App() {
 
     return () => {
       socket.off('room created');
+      socket.off('start game');
       socket.off('update');
       socket.off('error');
     };
@@ -40,10 +46,6 @@ function App() {
 
   function handleSquareClick(index) {
     console.log(`Clicked index: ${index}`);
-    //const newBoard = board.slice();
-    //newBoard[index] = "X";
-    //setBoard(newBoard);
-
     socket.emit('move', ({roomId, index}));
   }
 
