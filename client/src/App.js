@@ -3,23 +3,24 @@ import { socket } from './socket';
 import { PlayerForm } from './components/PlayerForm';
 
 function App() {
-  const [isConnected, setIsConnected] = useState(socket.connected);
+  
 
   useEffect(() => {
-    function onConnect() {
-      setIsConnected(true);
-    }
+    socket.on('room created', (roomId, game) => {
 
-    function onDisconnect() {
-      setIsConnected(false);
-    }
+    });
 
-    socket.on('connection', onConnect);
-    socket.on('disconnect', onDisconnect);
+    socket.on('update', (game) => {
 
+    });
+
+    socket.on('error', (error) => {
+
+    });
     return () => {
-      socket.off('connection', onConnect);
-      socket.off('disconnect', onDisconnect);
+      socket.off('room created');
+      socket.off('update');
+      socket.off('error');
     };
   }, []);
 
