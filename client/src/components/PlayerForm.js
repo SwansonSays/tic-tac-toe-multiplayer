@@ -1,21 +1,22 @@
 import React, { useState } from "react";
 import { socket } from "../socket";
 
-export function PlayerForm() {
-    const [name, setName] = useState('');
+export function PlayerForm({ setName }) {
+    const [value, setValue] = useState('');
 
-    function onSubmit(event) {
+    function handleSubmit(event) {
         event.preventDefault();
-        if(name) {
-            socket.emit('new player', name);
+        if(value) {
+            socket.emit('create game', (value));
+            setName(value);
         }
-        setName('');
+        setValue('');
     }
 
     return (
-        <form onSubmit={ onSubmit }>
+        <form onSubmit={ handleSubmit }>
             <h1>Enter Player Name:</h1>
-            <input id="input" value={ name } onChange={ e => setName(e.target.value) } />
+            <input id="input" value={ value } onChange={ e => setValue(e.target.value) } />
             <button type="submit">Search for Game</button>
         </form>
     );

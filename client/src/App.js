@@ -3,11 +3,12 @@ import { socket } from './socket';
 import { PlayerForm } from './components/PlayerForm';
 
 function App() {
-  
+  const [name, setName] = useState("")
 
   useEffect(() => {
-    socket.on('room created', (roomId, game) => {
-
+    socket.on('room created', (roomId) => {
+      console.log(`Server created room ${roomId} for client ${socket.id}`);
+      //redirect to game page
     });
 
     socket.on('update', (game) => {
@@ -17,6 +18,7 @@ function App() {
     socket.on('error', (error) => {
 
     });
+
     return () => {
       socket.off('room created');
       socket.off('update');
@@ -24,9 +26,10 @@ function App() {
     };
   }, []);
 
+
   return (
     <div className='App'>
-      <PlayerForm />
+      <PlayerForm setName={ setName }/>
     </div>
   );
 }
