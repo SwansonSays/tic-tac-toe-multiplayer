@@ -32,9 +32,12 @@ io.on('connection', async (socket) => {
 
         //if other player is in room still make room open for searching
         //TODO if player disconnects while there is no room for them it crashes server
-        if(rooms > 0 || games[rooms[0]].full === true) {
-            openGame[rooms[0]].full = false;
-            openGame.push(rooms[0]);
+        console.log(rooms[0]);
+        if(rooms > 0) {
+            if(games[rooms[0]].full === true) {
+                games[rooms[0]].full = false;
+                openGame.push(rooms[0]);
+            }
         }
     });
 
@@ -46,21 +49,41 @@ io.on('connection', async (socket) => {
         if(openGame.length > 0){
             const roomId = openGame.shift(); //race condition?
             socket.join(roomId);
-            games[roomId].player2name = name;
-            games[roomId].player2Id = socket.id;
+            
+            if(games[roomId].xId === null) {
+                games[roomId].xName = name;
+                games[roomId].xId = socket.id;
+            } else {
+                games[roomId].oName = name;
+                games[roomId].oId = socket.id;
+            }
+
             games[roomId].full = true;
             console.log(`Player: ${name} Id: ${socket.id} joined Room: ${roomId}`);
             startGame(roomId, socket);
+        
         } else {
             const roomId =uuidv4();
+
+            //randomize X and O player
+            let xName, xId, oName, oId = null;
+            let randomNumber = Math.floor(Math.random() * 2);
+
+            if(randomNumber) {
+                xName = name;
+                xId = socket.id;
+            } else {
+                oName = name;
+                oId = socket.id;
+            }
 
             games[roomId] = {
                 board: Array(9).fill(null),
                 xIsNext: true,
-                player1Name: name,
-                player1Id: socket.id,
-                player2Name: null,
-                player2Id: null,
+                xName: xName,
+                xId: xId,
+                oName: oName,
+                oId: oId,
                 full: false,
                 roomId: roomId,
             };
