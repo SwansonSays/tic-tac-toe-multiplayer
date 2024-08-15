@@ -49,10 +49,40 @@ function App() {
     socket.emit('move', ({roomId, index}));
   }
 
+  function whosTurn() {
+    return(
+      <div className='status'>{(game.xIsNext ? game.xName : game.oName) + "'s Turn."}</div>
+    );
+  }
+
+  function renderPage() {
+    //render game if both players are here
+    if(game !== null && game.full === true) {
+      return (
+        <>
+          {whosTurn()}
+          <Board squares={board} onSquareClick={handleSquareClick}/>
+        </>
+
+      );
+    } else if(inGame === true) {
+      //Only one player in game
+      return(
+        <div>
+          Searching for Player
+        </div>
+      );
+    } else {
+      //Login Screen
+      return(
+        <PlayerForm setName={ setName } />
+      );
+    }
+  }
+
   return (
     <div className='App'>
-      <PlayerForm setName={ setName } />
-      <Board squares={board} onSquareClick={handleSquareClick}/>
+      {renderPage()}
     </div>
   );
 }
